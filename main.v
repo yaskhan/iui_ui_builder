@@ -4,6 +4,7 @@ import iui
 import gg
 import os
 import json
+import uibuilder
 
 // Main application structure
 pub struct UIBuilder {
@@ -15,40 +16,10 @@ mut:
     structure    &iui.Tree2
     console      &iui.Textbox
     current_file string
-    project      Project
-    selected     ?ProjectNode
+    project      uibuilder.Project
+    selected     ?uibuilder.ProjectNode
     drag_source  ?string
     drag_target  ?string
-}
-
-// Project structure for serialization
-pub struct Project {
-mut:
-    version        string
-    window_settings WindowSettings
-    root_component ProjectNode
-}
-
-pub struct WindowSettings {
-mut:
-    width  int
-    height int
-    theme  string
-}
-
-// Project node represents a UI component in the hierarchy
-pub struct ProjectNode {
-mut:
-    type       string
-    properties map[string]string
-    layout     ?LayoutConfig
-    children   []ProjectNode
-}
-
-pub struct LayoutConfig {
-mut:
-    type       string
-    params     map[string]string
 }
 
 // Component registry
@@ -92,14 +63,14 @@ pub fn (mut app UIBuilder) init() {
     app.setup_toolbar()
     
     // Initialize project
-    app.project = Project{
+    app.project = uibuilder.Project{
         version: '1.0'
-        window_settings: WindowSettings{
+        window_settings: uibuilder.WindowSettings{
             width: 800
             height: 600
             theme: 'Default'
         }
-        root_component: ProjectNode{
+        root_component: uibuilder.ProjectNode{
             type: 'Panel'
             properties: {
                 'x': '0'
@@ -107,7 +78,7 @@ pub fn (mut app UIBuilder) init() {
                 'width': '800'
                 'height': '600'
             }
-            layout: LayoutConfig{
+            layout: uibuilder.LayoutConfig{
                 type: 'BoxLayout'
                 params: {
                     'ori': '1'  // vertical
@@ -394,7 +365,7 @@ fn (mut app UIBuilder) update_canvas() {
 }
 
 // Create UI component from project node
-fn (mut app UIBuilder) create_component_from_node(node ProjectNode) &iui.Component_A {
+fn (mut app UIBuilder) create_component_from_node(node uibuilder.ProjectNode) &iui.Component_A {
     mut component := unsafe { nil }
     
     // Create component based on type
@@ -485,7 +456,7 @@ fn (mut app UIBuilder) update_structure_tree() {
 }
 
 // Add tree nodes recursively
-fn (mut app UIBuilder) add_tree_nodes(parent iui.TreeNode, children []ProjectNode) {
+fn (mut app UIBuilder) add_tree_nodes(parent iui.TreeNode, children []uibuilder.ProjectNode) {
     for child in children {
         mut node := iui.TreeNode{
             text: child.type
@@ -515,7 +486,7 @@ fn (mut app UIBuilder) select_component(component &iui.Component_A) {
 }
 
 // Find project node for a component (simplified)
-fn (mut app UIBuilder) find_node_for_component(parent ProjectNode, component &iui.Component_A) ?ProjectNode {
+fn (mut app UIBuilder) find_node_for_component(parent uibuilder.ProjectNode, component &iui.Component_A) ?uibuilder.ProjectNode {
     // This is a simplified version - in a real implementation, you'd need
     // to track component IDs or use other means to identify components
     
@@ -618,14 +589,14 @@ fn (mut app UIBuilder) update_properties() {
 
 // New project
 fn (mut app UIBuilder) new_project() {
-    app.project = Project{
+    app.project = uibuilder.Project{
         version: '1.0'
-        window_settings: WindowSettings{
+        window_settings: uibuilder.WindowSettings{
             width: 800
             height: 600
             theme: 'Default'
         }
-        root_component: ProjectNode{
+        root_component: uibuilder.ProjectNode{
             type: 'Panel'
             properties: {
                 'x': '0'
@@ -633,7 +604,7 @@ fn (mut app UIBuilder) new_project() {
                 'width': '800'
                 'height': '600'
             }
-            layout: LayoutConfig{
+            layout: uibuilder.LayoutConfig{
                 type: 'BoxLayout'
                 params: {
                     'ori': '1'  // vertical
@@ -663,7 +634,7 @@ fn (mut app UIBuilder) open_project() {
             return
         }
         
-        app.project = json.decode(Project, content) or { 
+        app.project = json.decode(uibuilder.Project, content) or { 
             app.log('Error parsing JSON')
             return
         }
@@ -694,64 +665,11 @@ fn (mut app UIBuilder) save_project() {
 
 // Generate V code
 fn (mut app UIBuilder) generate_v_code() {
-    mut code := 'import iui\n\n'
-    code += 'fn build_ui() &iui.Panel {\n'
-    code += '    ' + app.generate_component_code(app.project.root_component, 1)
-    code += '\n    return panel\n'
-    code += '}\n'
-    
+    code := uibuilder.generate_v_code(app.project)
+
     // Show code in console
     app.console.lines = code.split('\n')
     app.log('V code generated')
-}
-
-// Generate component code recursively
-fn (mut app UIBuilder) generate_component_code(node ProjectNode, indent int) string {
-    mut code := ''
-    mut spaces := ' '.repeat(indent * 4)
-    
-    if node.type == 'Panel' {
-        code += spaces + 'mut panel := &iui.Panel{\n'
-        
-        // Add properties
-        for name, value in node.properties {
-            code += spaces + '    ' + name + ': ' + value + '\n'
-        }
-        
-        // Add layout
-        if node.layout != none {
-            code += spaces + '    layout: iui.' + node.layout.type + '{\n'
-            for name, value in node.layout.params {
-                code += spaces + '        ' + name + ': ' + value + '\n'
-            }
-            code += spaces + '    }\n'
-        }
-        
-        code += spaces + '}\n'
-        
-        // Add children
-        for child in node.children {
-            code += app.generate_component_code(child, indent + 1)
-            
-            // Add child to panel
-            if child.type == 'Button' {
-                code += spaces + 'mut btn := iui.Button.new(text: "' + child.properties['text'] + '", width: ' + child.properties['width'] + ', height: ' + child.properties['height'] + ')\n'
-                code += spaces + 'panel.add_child(btn)\n'
-            }
-        }
-    } else if node.type == 'Button' {
-        code += spaces + 'mut btn := iui.Button.new(iui.ButtonConfig{\n'
-        code += spaces + '    text: "' + node.properties['text'] + '"\n'
-        code += spaces + '    bounds: iui.Bounds{\n'
-        code += spaces + '        x: ' + node.properties['x'] + '\n'
-        code += spaces + '        y: ' + node.properties['y'] + '\n'
-        code += spaces + '        width: ' + node.properties['width'] + '\n'
-        code += spaces + '        height: ' + node.properties['height'] + '\n'
-        code += spaces + '    }\n'
-        code += spaces + '})\n'
-    }
-    
-    return code
 }
 
 // Log message to console
