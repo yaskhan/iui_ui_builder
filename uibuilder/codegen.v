@@ -54,8 +54,7 @@ fn (mut ctx CodegenContext) gen_node(node ProjectNode, indent int, var_name stri
                 out.writeln('${spaces}    height: ${height}')
             }
 
-            if node.layout != none {
-                layout := node.layout or { panic('unreachable') }
+            if layout := node.layout {
                 out.writeln('${spaces}    layout: ${layout_expr(layout)}')
             }
 
@@ -423,6 +422,7 @@ fn (mut ctx CodegenContext) next_var_name(component_type string) string {
         'Tabbox' { 'tabs' }
         'SplitView' { 'split' }
         'NavPane' { 'nav' }
+        'BoxLayout', 'FlowLayout', 'BorderLayout', 'GridLayout', 'CardLayout' { 'layout' }
         else { component_type.to_lower() }
     }
 

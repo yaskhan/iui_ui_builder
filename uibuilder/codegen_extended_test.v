@@ -197,47 +197,47 @@ fn test_generate_v_code_all_components() {
     assert code.contains('layout: iui.BoxLayout.new(ori: 1, vgap: 10)')
 
     // Verify Input Controls
-    assert code.contains('mut tf := iui.TextField.new(iui.TextFieldConfig{')
-    assert code.contains('text: '\''Enter name'\'')
+    assert code.contains('mut tf1 := iui.TextField.new(iui.TextFieldConfig{')
+    assert code.contains("text: 'Enter name'")
     
-    assert code.contains('mut tb := iui.Textbox.new(iui.TextboxConfig{')
+    assert code.contains('mut tb2 := iui.Textbox.new(iui.TextboxConfig{')
     assert code.contains('lines: [')
     
-    assert code.contains('mut cb := iui.Checkbox.new(iui.CheckboxConfig{')
-    assert code.contains('text: '\''Remember me'\'')
+    assert code.contains('mut cb3 := iui.Checkbox.new(iui.CheckboxConfig{')
+    assert code.contains("text: 'Remember me'")
     assert code.contains('selected: true')
     
-    assert code.contains('mut sw := iui.Switch.new(iui.SwitchConfig{')
-    assert code.contains('text: '\''Enable notifications'\'')
+    assert code.contains('mut sw4 := iui.Switch.new(iui.SwitchConfig{')
+    assert code.contains("text: 'Enable notifications'")
     
-    assert code.contains('mut slider := iui.Slider.new(iui.SliderConfig{')
+    assert code.contains('mut slider5 := iui.Slider.new(iui.SliderConfig{')
     assert code.contains('min: 0')
     assert code.contains('max: 100')
     
-    assert code.contains('mut pb := iui.Progressbar.new(iui.ProgressbarConfig{')
+    assert code.contains('mut pb6 := iui.Progressbar.new(iui.ProgressbarConfig{')
     assert code.contains('val: 75')
 
     // Verify Display Controls
-    assert code.contains('mut img := iui.Image.new(iui.ImgConfig{')
-    assert code.contains('file: '\''logo.png'\'')
+    assert code.contains('mut img7 := iui.Image.new(iui.ImgConfig{')
+    assert code.contains("file: 'logo.png'")
     
     // Verify Layout Controls
-    assert code.contains('mut sv := iui.ScrollView.new(iui.ScrollViewConfig{')
+    assert code.contains('mut sv9 := iui.ScrollView.new(iui.ScrollViewConfig{')
     
-    assert code.contains('mut tabs := iui.Tabbox.new(iui.TabboxConfig{')
+    assert code.contains('mut tabs10 := iui.Tabbox.new(iui.TabboxConfig{')
     
-    assert code.contains('mut split := iui.SplitView.new(iui.SplitViewConfig{')
+    assert code.contains('mut split11 := iui.SplitView.new(iui.SplitViewConfig{')
     assert code.contains('h1: 50')
     assert code.contains('h2: 50')
     
-    assert code.contains('mut nav := iui.NavPane.new(iui.NavPaneConfig{')
+    assert code.contains('mut nav12 := iui.NavPane.new(iui.NavPaneConfig{')
     assert code.contains('collapsed: false')
 
     // Verify nested components
-    assert code.contains('mut panel1 := iui.Panel.new(iui.PanelConfig{')
+    assert code.contains('mut panel13 := iui.Panel.new(iui.PanelConfig{')
     assert code.contains('layout: iui.FlowLayout.new(hgap: 10, vgap: 10)')
-    assert code.contains('panel1.add_child(btn1)')
-    assert code.contains('panel.add_child(panel1)')
+    assert code.contains('panel13.add_child(btn14)')
+    assert code.contains('panel.add_child(panel13)')
 }
 
 fn test_component_registry_complete() {
