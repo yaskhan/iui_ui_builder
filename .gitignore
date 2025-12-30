@@ -1,0 +1,29 @@
+# V language
+*.vch
+*.v.o
+*.v.exe
+*.v.d
+
+# Build artifacts
+bin/
+build/
+dist/
+
+# Environment
+.env
+.env.local
+
+# IDE/Editor
+.vscode/
+.idea/
+
+# Dependencies
+vendor/
+
+# Logs
+tmp/
+*.log
+
+# System files
+.DS_Store
+Thumbs.db

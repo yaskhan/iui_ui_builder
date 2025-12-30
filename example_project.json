@@ -1,0 +1,82 @@
+{
+  "version": "1.0",
+  "window_settings": {
+    "width": 800,
+    "height": 600,
+    "theme": "Default"
+  },
+  "root_component": {
+    "type": "Panel",
+    "layout": {
+      "type": "BoxLayout",
+      "params": {
+        "ori": "1",
+        "vgap": "5"
+      }
+    },
+    "properties": {
+      "x": "0",
+      "y": "0",
+      "width": "800",
+      "height": "600"
+    },
+    "children": [
+      {
+        "type": "Button",
+        "properties": {
+          "text": "Click Me",
+          "x": "10",
+          "y": "10",
+          "width": "100",
+          "height": "30"
+        }
+      },
+      {
+        "type": "Label",
+        "properties": {
+          "text": "Hello World",
+          "x": "10",
+          "y": "50"
+        }
+      },
+      {
+        "type": "Panel",
+        "properties": {
+          "x": "0",
+          "y": "100",
+          "width": "200",
+          "height": "200"
+        },
+        "layout": {
+          "type": "FlowLayout",
+          "params": {
+            "hgap": "5",
+            "vgap": "5"
+          }
+        },
+        "children": [
+          {
+            "type": "Button",
+            "properties": {
+              "text": "OK",
+              "x": "0",
+              "y": "0",
+              "width": "80",
+              "height": "30"
+            }
+          },
+          {
+            "type": "Button",
+            "properties": {
+              "text": "Cancel",
+              "x": "0",
+              "y": "0",
+              "width": "80",
+              "height": "30"
+            }
+          }
+        ]
+      }
+    ]
+  }
+}
