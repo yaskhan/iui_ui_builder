@@ -1,6 +1,6 @@
 module main
 
-import iui
+import isaiahpatton.iui
 import gg
 import os
 import json
